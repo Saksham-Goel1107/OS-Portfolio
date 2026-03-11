@@ -1,184 +1,122 @@
-<p align="center">
-  <img src="https://fra.cloud.appwrite.io/v1/storage/buckets/697b974d001a7a80496e/files/697b9764002453409e98/view?project=69735edc00127d2033d8&mode=admin" alt="FairArena Logo" width="140" height="140">
-</p>
+# OS-Portfolio — Retro OS-style Personal Portfolio
+
+An interactive, OS-like portfolio built with Next.js and TypeScript. The project showcases a desktop-inspired UI, apps, and a collection of demo content to present work in a playful, nostalgic way.
+
+Repository: https://github.com/Saksham-Goel1107/OS-Portfolio
+
+> Note: This repository contains demo content. Personal details, dates, and project data in the portfolio may be fictional or inaccurate and are included for demonstration purposes only.
 
 ---
 
-<p align="center">
-  <strong>Modern full-stack platform for fair and transparent skill assessment</strong>
-</p>
+## What is this?
+
+OS-Portfolio is a single-page portfolio shell that imitates a desktop operating system. It demonstrates UX ideas and frontend techniques for presenting projects inside movable windows, with a dock, lock screen, quick settings, and small app-like pages (e.g., Projects, Files, Terminal, Resume viewer).
+
+This repo is intended as a visually interesting portfolio template and learning resource — not a production OS.
 
 ---
 
-# [Project Name]
+## Key Features
 
-<!--
-  README TEMPLATE
-
-  Instructions:
-  1. Replace all [Placeholders] with your specific project details.
-  2. Uncomment and fill in the sections relevant to your project.
-  3. Remove these instruction comments before publishing.
--->
-
-<p align="center">
-  <!-- <img src="./path/to/your/logo.png" alt="Logo" width="150" height="150"> -->
-</p>
-
-<p align="center">
-  <strong>[Insert Project Tagline or Short Description]</strong>
-</p>
-
-<p align="center">
-  <!-- Add your Badges here (e.g., License, Version, CI/CD Status) -->
-  <!-- <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"> -->
-</p>
-
-<p align="center">
-  <a href="#features">Features</a> •
-  <a href="#tech-stack">Stack</a> •
-  <a href="#getting-started">Getting Started</a> •
-  <a href="#documentation">Docs</a>
-</p>
+- Retro OS-style desktop UI with draggable windows and dock
+- App components for Projects, Files, Calendar, Terminal, Resume and more
+- Responsive, accessible UI built with Next.js + TypeScript
+- Static demo data stored under `lib/portfolio.ts` for easy customization
+- Simple file viewer and PDF embedding for demonstrating portfolio assets
 
 ---
 
-## 🚀 Overview
+## Tech Stack
 
-[Provide a comprehensive description of your project. What problem does it solve? Who is the target audience? What are the main goals?]
-
----
-
-## ✨ Features
-
-<!-- List the key features of your application -->
-
-- **[Feature One]**: [Description of what this feature does]
-- **[Feature Two]**: [Description of what this feature does]
-- **[Feature Three]**: [Description of what this feature does]
+| Area | Technology |
+|------|------------|
+| Frontend | Next.js (App Router), React, TypeScript |
+| Styling | PostCSS / plain CSS (globals.css) |
+| Tooling | npm, ESLint, TypeScript |
 
 ---
 
-## 🛠 Tech Stack
+## Getting started (local)
 
-<!-- Update this table to reflect the technologies used in your project -->
+Prerequisites: Node.js 18+ recommended.
 
-| Category | Technology | Description |
-|----------|------------|-------------|
-| **Frontend** | [e.g. React] | [e.g. UI Library] |
-| **Backend** | [e.g. Node.js] | [e.g. Server Runtime] |
-| **Database** | [e.g. PostgreSQL] | [e.g. Main Database] |
-| **Styling** | [e.g. Tailwind CSS] | [e.g. Styling Framework] |
-| **DevOps** | [e.g. Docker] | [e.g. Containerization] |
+Clone and run locally:
 
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-<!-- List software required to run the project -->
-
-- **Node.js** (v[Version]+)
-- **pnpm** (v[Version]+)
-- **Docker** (Optional)
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone [your-repo-url]
-   cd [project-folder-name]
-   ```
-
-2. **Install dependencies**
-   ```bash
-   pnpm install
-   ```
-
-3. **Environment Configuration**
-
-   Create `.env` files based on the provided examples:
-   ```bash
-   cp Backend/.env.example Backend/.env
-   cp Frontend/.env.example Frontend/.env.local
-   ```
-
-   *Update the created `.env` files with your specific configuration values.*
-
-4. **Database Setup**
-   ```bash
-   # [Insert commands to setup/migrate database]
-   cd Backend && pnpm db:migrate
-   ```
-
-### Running the Application
-
-You can start the services using the following commands:
-
-**Backend Server**
 ```bash
-cd Backend
-pnpm dev
+git clone https://github.com/Saksham-Goel1107/OS-Portfolio.git
+cd OS-Portfolio
+npm install
+npm run dev
 ```
 
-**Frontend Application**
+Open http://localhost:3000 to view the portfolio.
+
+Build for production:
+
 ```bash
-cd Frontend
-pnpm dev
+npm run build
+npm run start
 ```
 
 ---
 
-## 📁 Project Structure
+## Project structure (high level)
 
-<!-- Briefly explain the folder structure if necessary -->
+- `app/` — Next.js app routes and pages (App Router)
+- `components/` — React UI components (windows, dock, apps)
+- `lib/portfolio.ts` — Demo data: profile, projects, files, settings
+- `public/assets/` — Static images and assets used by the UI
+- `styles` / `globals.css` — Global styles
 
-```text
-.
-├── Backend/            # [Backend Description]
-├── Frontend/           # [Frontend Description]
-├── ShellScripts/       # [Scripts Description]
-└── ...
-```
+To customize the displayed profile and projects, edit `lib/portfolio.ts` and replace demo entries with your real content.
 
 ---
 
-## 📚 Documentation
+## Customize the demo data
 
-<!-- Link to additional documentation or Wiki -->
+All visible content (name, projects, experience, files) is driven from `lib/portfolio.ts`. Edit that file to:
 
-- [API Documentation](./path/to/docs)
-- [Architecture Overview](./path/to/docs)
+1. Update `PORTFOLIO` fields (name, title, contact links, projects)
+2. Replace images in `public/assets` and update paths
+3. Optionally adjust window defaults in `WIN_DEFAULTS` for sizes/titles
 
----
-
-## 🤝 Contributing
-
-[Instructions on how to contribute to the project]
-
-1. Fork the Project
-2. Create your Feature Branch
-3. Commit your Changes
-4. Push to the Branch
-5. Open a Pull Request
+Changes are hot-reloaded in development.
 
 ---
 
-## 📄 License
+## Deployment
 
-This project is licensed under the **Proprietary License** — see the [LICENSE](LICENSE) file for details.
+This Next.js app can be deployed on Vercel (recommended) or any platform that supports Next.js.
+
+1. Push the repo to GitHub: `git push origin main`
+2. Import project on Vercel and set framework to Next.js
 
 ---
 
-## 👤 Author
+## Contributing
 
-**[Your Name/Organization]**
+Contributions are welcome. For fixes or improvements:
 
-- Website: [Your Website URL]
-- GitHub: [Your GitHub Profile URL]
-- Email: [Your Email Address]
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feat/my-change`)
+3. Commit and push your changes
+4. Open a pull request describing your change
 
-<p align="center">
-  <sub>Built with ❤️ by the FairArena Team</sub>
-</p>
+Please keep changes focused and open an issue first for large features.
+
+---
+
+## License
+
+No license file is included in this repository by default. Check the `LICENSE` file (if present) or contact the repository owner for usage terms.
+
+---
+
+## Author / Contact
+
+This repo is published at https://github.com/Saksham-Goel1107/OS-Portfolio
+
+If you want to adapt this template for your own portfolio, edit `lib/portfolio.ts` and replace the demo content with your real projects and links.
+
+<sub>Demo content may be inaccurate — this is a showcase template, not a real personal profile.</sub>
+
