@@ -1,0 +1,147 @@
+'use client';
+import { useState } from 'react';
+import { DOCK_APPS } from '@/lib/portfolio';
+import { TerminalIcon, FolderIcon, UserIcon, BriefcaseIcon, CalendarIcon, SettingsIcon, GridIcon, GoelOSIcon } from '@/components/Icons';
+
+const ICONS: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
+    terminal: TerminalIcon,
+    files: FolderIcon,
+    about: UserIcon,
+    projects: BriefcaseIcon,
+    calendar: CalendarIcon,
+    settings: SettingsIcon,
+    all: GoelOSIcon,
+};
+
+interface Props {
+    onOpen: (id: string) => void;
+    onToggleSearch: () => void;
+    openApps: string[];
+    minimizedApps: string[];
+    shouldHide?: boolean;
+    isSelecting?: boolean;
+}
+
+export default function Dock({ onOpen, onToggleSearch, openApps, minimizedApps, shouldHide, isSelecting }: Props) {
+    const [isDockHovered, setIsDockHovered] = useState(false);
+    const [isBottomHovered, setIsBottomHovered] = useState(false);
+
+    // Dock is visible if:
+    // 1. It's not supposed to hide (no windows overlap) OR
+    // 2. The user is hovering over the dock or the bottom trigger area
+    const visible = !shouldHide || isDockHovered || isBottomHovered;
+
+    return (
+        <>
+            {/* Hover Trigger Area (Thin strip at bottom) */}
+            <div
+                className="fixed bottom-0 left-0 right-0 h-5 z-[4999]"
+                onMouseEnter={() => !isSelecting && setIsBottomHovered(true)}
+                onMouseLeave={() => setIsBottomHovered(false)}
+            />
+
+            <div
+                className="fixed bottom-3 left-1/2 flex items-center justify-center px-3.5 w-[450px] h-[70px] z-[5000] select-none transition-all duration-300 ease-in-out"
+                onMouseEnter={() => !isSelecting && setIsDockHovered(true)}
+                onMouseLeave={() => setIsDockHovered(false)}
+                onContextMenu={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                style={{
+                    background: 'rgba(24,24,24,0.88)',
+                    backdropFilter: 'blur(28px)',
+                    WebkitBackdropFilter: 'blur(28px)',
+                    borderRadius: 18,
+                    border: '1px solid rgba(255,255,255,0.10)',
+                    boxShadow: '0 8px 40px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.06) inset',
+                    gap: 2,
+                    transform: `translateX(-50%) translateY(${visible ? '0' : '150%'})`,
+                    opacity: visible ? 1 : 0,
+                }}
+            >
+                {/* Show Applications at the start */}
+                <DockIcon
+                    id="all"
+                    label="Show Applications"
+                    Icon={GoelOSIcon}
+                    active={false}
+                    minimized={false}
+                    onOpen={onToggleSearch}
+                    isSelecting={isSelecting}
+                />
+
+                {/* Separator */}
+                <div className="mx-1 h-8 w-[1px] bg-white/10 self-center" />
+
+                {DOCK_APPS.map(app => {
+                    const isOpen = openApps.includes(app.id);
+                    const isMinimized = minimizedApps.includes(app.id);
+                    const Icon = ICONS[app.id] ?? TerminalIcon;
+                    return <DockIcon key={app.id} id={app.id} label={app.label} Icon={Icon} active={isOpen && !isMinimized} minimized={isOpen && isMinimized} onOpen={() => onOpen(app.id)} isSelecting={isSelecting} />;
+                })}
+            </div>
+        </>
+    );
+}
+
+function DockIcon({ id, label, Icon, active, minimized, onOpen, isSelecting }: { id: string; label: string; Icon: React.ComponentType<{ size?: number; color?: string }>; active: boolean; minimized: boolean; onOpen: () => void; isSelecting?: boolean }) {
+    const [hov, setHov] = useState(false);
+
+    const iconColor = {
+        terminal: '#4ec9b0',
+        files: '#e95420',
+        about: '#93c4e8',
+        projects: '#a8d98c',
+        calendar: '#f37222',
+        settings: '#ccc',
+        all: '#fff',
+    }[id] ?? '#e0e0e0';
+    const iconBg = {
+        terminal: 'linear-gradient(145deg, #1a1a1a, #2c2c2c)',
+        files: 'linear-gradient(145deg, #3d1e10, #5a2d14)',
+        about: 'linear-gradient(145deg, #1e2a3d, #2d3f5a)',
+        projects: 'linear-gradient(145deg, #1d2a1a, #2b3d28)',
+        calendar: 'linear-gradient(145deg, #2d1a1a, #3d2828)',
+        settings: 'linear-gradient(145deg, #252525, #333)',
+        all: 'transparent',
+    }[id] ?? 'linear-gradient(145deg, #2a2a2a, #383838)';
+
+    return (
+        <div className="relative flex flex-col gap-0.5 w-[59px] items-center  pt-[2px]" onMouseEnter={() => !isSelecting && setHov(true)} onMouseLeave={() => setHov(false)}>
+            {/* Tooltip */}
+            {hov && !isSelecting && (
+                <div className="absolute bottom-[62px] text-[12px] text-white px-2.5 py-1 rounded-lg whitespace-nowrap pointer-events-none animate-fade-in-scale"
+                    style={{ background: 'rgba(0,0,0,0.88)', border: '1px solid rgba(255,255,255,0.12)', fontFamily: "'Ubuntu Mono', monospace" }}>
+                    {label}
+                </div>
+            )}
+            <button
+                onClick={onOpen}
+                className={`flex items-center justify-center border-0 cursor-pointer transition-all duration-300 ${id === 'all' ? 'rounded-full scale-105' : 'rounded-[14px]'}`}
+                style={{
+                    width: 'var(--dock-icon-size, 52px)',
+                    height: 'var(--dock-icon-size, 52px)',
+                    background: iconBg,
+                    boxShadow: hov && !isSelecting ? '0 6px 20px rgba(0,0,0,0.6)' : '0 2px 8px rgba(0,0,0,0.4)',
+                    transform: hov && !isSelecting ? 'scale(1.18) translateY(-5px)' : 'scale(1)',
+                    transition: 'transform 0.15s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.15s ease',
+                    border: active ? '1px solid rgba(233,84,32,0.4)' : '1px solid rgba(255,255,255,0.07)',
+                }}
+            >
+                <div className="flex items-center justify-center dock-icon-wrapper">
+                    <Icon size={id === 'all' ? 28 : 26} color={iconColor} />
+                </div>
+            </button>
+            {/* Active dot */}
+            <div
+                className="mt-1 mb-0.5 transition-all duration-200"
+                style={{
+                    width: minimized ? 6 : 4,
+                    height: minimized ? 6 : 4,
+                    borderRadius: minimized ? 1 : 999,
+                    background: active || minimized ? '#e95420' : 'transparent',
+                    boxShadow: active ? '0 0 4px #e95420' : minimized ? 'none' : 'none',
+                    opacity: minimized ? 0.9 : 1,
+                }}
+            />
+        </div>
+    );
+}

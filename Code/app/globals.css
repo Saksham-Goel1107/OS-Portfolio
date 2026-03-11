@@ -1,0 +1,511 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+@import "tailwindcss";
+
+:root {
+  --accent: #e95420;
+  --accent-hover: #f37222;
+  --bg-desktop: #1a0510;
+  --bg-window: #2d2d2d;
+  --bg-titlebar: #3d3d3d;
+  --bg-sidebar: #252525;
+  --bg-input: #1e1e1e;
+  --bg-terminal: #1a1a1a;
+  --topbar: rgba(0, 0, 0, 0.82);
+  --dock: rgba(24, 24, 24, 0.88);
+  --border: #444;
+  --text: #ffffff;
+  --text-dim: #cccccc;
+  --text-muted: #888888;
+  --prompt: #4ec9b0;
+  --btn-close: #e74c3c;
+  --btn-min: #f1c40f;
+  --btn-max: #2ecc71;
+  /* Ubuntu Mono everywhere */
+  font-family: 'Ubuntu Mono', 'Courier New', monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#__next {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+body {
+  font-family: 'Ubuntu Mono', 'Courier New', monospace;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* Range slider — Ubuntu Yaru style */
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #555;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e95420;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  transition: transform 0.1s;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+  border-radius: 2px;
+}
+
+/* Keyframes */
+@keyframes windowOpen {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-10px);
+  }
+
+  40% {
+    transform: translateX(10px);
+  }
+
+  60% {
+    transform: translateX(-6px);
+  }
+
+  80% {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes bootFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-window-open {
+  animation: windowOpen 0.18s ease-out forwards;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.2s ease-out forwards;
+}
+
+.animate-boot-fade {
+  animation: bootFade 0.25s ease forwards;
+}
+
+.animate-spin-orange {
+  animation: spin 1s linear infinite;
+}
+
+.animate-shake {
+  animation: shake 0.4s ease;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.18s ease-out forwards;
+}
+
+/* Window Transitions & Maximize Preview */
+.app-window {
+  transition: transform 0.18s cubic-bezier(0.4, 0, 1, 1),
+    top 0.18s cubic-bezier(0.4, 0, 1, 1),
+    left 0.18s cubic-bezier(0.4, 0, 1, 1),
+    width 0.18s cubic-bezier(0.4, 0, 1, 1),
+    height 0.18s cubic-bezier(0.4, 0, 1, 1),
+    border-radius 0.18s cubic-bezier(0.4, 0, 1, 1),
+    box-shadow 0.18s cubic-bezier(0.4, 0, 1, 1);
+  will-change: transform, opacity, top, left, width, height;
+}
+
+.app-window.is-dragging {
+  transition: none !important;
+}
+
+.app-window.is-restoring-from-max-drag {
+  transition: transform 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    top 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    width 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    height 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 0.46s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.46s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.app-window.is-entering {
+  animation: windowEnter 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.app-window.is-closing,
+.app-window.is-minimizing {
+  pointer-events: none;
+}
+
+.app-window.is-minimized {
+  opacity: 0 !important;
+  transform: translateY(34px) scale(0.92) !important;
+  visibility: hidden;
+}
+
+.app-window.is-closing {
+  animation: windowClose 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+.app-window.is-minimizing {
+  animation: windowMinimize 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes windowEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes windowClose {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(14px) scale(0.965);
+  }
+}
+
+@keyframes windowMinimize {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(34px) scale(0.92);
+  }
+}
+
+.maximize-preview {
+  position: fixed;
+  inset: 28px 0 0 0;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 9000;
+  pointer-events: none;
+  animation: previewFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes previewFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.99);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Dynamic Typography Scaler */
+.app-window-content {
+  font-size: 14px;
+  transition: font-size 0.22s cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* Scale up common text sizes in maximized windows */
+.is-maximized .app-window-content {
+  font-size: 16px;
+}
+
+/* Target tailwind generic and explicit sizes */
+.is-maximized .app-window-content *[class*="text-[1"] {
+  font-size: 15.5px !important;
+}
+
+.is-maximized .app-window-content *[class*="text-[13px]"] {
+  font-size: 15.5px !important;
+}
+
+.is-maximized .app-window-content *[class*="text-[12px]"] {
+  font-size: 14px !important;
+}
+
+.is-maximized .app-window-content *[class*="text-[11px]"] {
+  font-size: 13px !important;
+}
+
+.is-maximized .app-window-content *[class*="text-[18px]"] {
+  font-size: 21px !important;
+}
+
+.is-maximized .app-window-content *[class*="text-sm"] {
+  font-size: 16px !important;
+}
+
+.is-maximized .app-window-content *[class*="text-xs"] {
+  font-size: 14px !important;
+}
+
+/* Ensure terminal lines and about app rows scale too */
+.is-maximized .app-window-content div[style*="font-size: 13"] {
+  font-size: 15.5px !important;
+}
+
+.is-maximized .app-window-content span[style*="font-size: 13"] {
+  font-size: 15.5px !important;
+}
+
+.is-maximized .app-window-content div[style*="font-size: 18"] {
+  font-size: 21px !important;
+}
+
+.is-maximized .app-window-content span[style*="font-size: 11"] {
+  font-size: 13px !important;
+}
+
+
+:root {
+  --dock-icon-size: 56px;
+}
+
+#app-root-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Specific scaling for smaller screens */
+@media (max-width: 950px) and (orientation: landscape),
+(max-width: 650px) {
+  :root {
+    --dock-size: 48px;
+    --dock-icon-size: 42px;
+    --topbar-height: 24px;
+  }
+
+  .dock-icon-img,
+  .dock-icon-wrapper svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  /* Shrink Dock padding and gap */
+  .fixed.bottom-3.left-1\/2 {
+    bottom: 8px !important;
+    padding: 4px 12px !important;
+    gap: 4px !important;
+    border-radius: 14px !important;
+  }
+
+  [data-icon-id] {
+    width: 62px !important;
+  }
+
+  [data-icon-id]>div:first-child {
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  [data-icon-id]>div:first-child svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .app-window.is-entering {
+    animation: windowEnterMobile 0.22s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+  }
+
+  .app-window.is-closing {
+    animation: windowCloseMobile 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+
+  .app-window.is-minimizing {
+    animation: windowMinimizeMobile 0.2s cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+
+  .app-window-content {
+    font-size: 10px !important;
+  }
+
+  .is-maximized .app-window-content {
+    font-size: 12px !important;
+  }
+
+  .top-bar-container {
+    height: var(--topbar-height) !important;
+  }
+
+  .top-bar-container * {
+    font-size: 10px !important;
+  }
+
+  /* Search Overlay Adjustments for Mobile */
+  .SearchOverlay_container {
+    padding-top: 2vh !important;
+  }
+
+  .SearchOverlay_input_container {
+    max-width: 85% !important;
+    padding: 6px 10px !important;
+  }
+
+  .SearchOverlay_grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .SearchOverlay_grid button div {
+    /* shrink app icons in search */
+    width: 48px !important;
+    height: 48px !important;
+  }
+
+  .SearchOverlay_header {
+    font-size: 14px !important;
+    margin-top: 16px !important;
+  }
+}
+
+@keyframes windowEnterMobile {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes windowCloseMobile {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+}
+
+@keyframes windowMinimizeMobile {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.92) translateY(16px);
+  }
+}
+
+@media (max-height: 550px) {
+  :root {
+    --topbar-height: 24px;
+  }
+
+  .top-bar-container {
+    height: var(--topbar-height) !important;
+  }
+}
